@@ -1,0 +1,137 @@
+---
+title: "raw_to_asv_DADA2"
+output: html_document
+---
+# Setting up 
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "~/raw_fastq")
+```
+
+```{r}
+library(dada2)
+
+path <- "~/raw_fastq"
+list.files(path) #shows files in the folder set by the path 
+
+fnFs <- sort(list.files(path, pattern="_R1_001.fastq", full.names = TRUE)) 
+fnRs <- sort(list.files(path, pattern="_R2_001.fastq", full.names = TRUE))
+
+sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
+
+filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
+filtRs <- file.path(path, "filtered", paste0(sample.names, "_R_filt.fastq.gz"))
+
+names(filtFs) <- sample.names
+names(filtRs) <- sample.names
+
+
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, trimLeft = c(18,21), truncLen=c(280,240),
+                     maxN=0, maxEE=4, truncQ=2,rm.phix=TRUE, 
+                     compress=TRUE, multithread=TRUE) 
+
+errF <- learnErrors(filtFs, multithread=TRUE, randomize=TRUE)
+errR <- learnErrors(filtRs, multithread=TRUE, randomize=TRUE)
+
+# visualize the estimated error rates:
+# plotErrors(errF, nominalQ=TRUE)
+
+# Apply the core sample inference algorithm to the filtered and trimmed sequence data
+dadaFs <- dada(filtFs, err=errF, pool = "pseudo", multithread=TRUE)
+dadaRs <- dada(filtRs, err=errR, pool = "pseudo", multithread=TRUE)
+
+# Merge paired reads
+mergers <- mergePairs(dadaFs, filtFs, dadaRs, filtRs)
+# Construct an amplicon sequence variant table (ASV) table (a higher-resolution version of the OTU table produced by traditional methods)
+seqtab <- makeSequenceTable(mergers)
+#View dimension of your matrices 
+dim(seqtab)
+# Inspect distribution of sequence lengths
+table(nchar(getSequences(seqtab)))
+# Remove chimeras 
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE)
+#View dimension of your matrices 
+dim(seqtab.nochim)
+sum(seqtab.nochim)/sum(seqtab)
+
+# Track reads through the pipeline (obtain the count of how many sequences were deleted at each steps) 
+getN <- function(x) sum(getUniques(x))
+track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
+rownames(track) <- sample.names
+track
+
+# ----------------- ID TAXA Classification ----------------- 
+
+# Classify using DADA2 function assignTaxonomy
+taxa <- assignTaxonomy(seqtab.nochim, "silva_nr99_v138.1_train_set.fa.gz", multithread=TRUE, tryRC=TRUE)
+write.csv(taxa, file = "/DADA2_output/classified_taxa.csv")
+
+# Add the higher identified taxonomic rank to unclassified ranks and remove non-bacterial Kingdoms.  
+taxid=data.frame(t(taxa))
+taxid[] <- lapply(taxid, as.character)
+taxa2<- tidyr::fill(taxid, colnames(taxid),.direction = "down")
+taxa2<- sapply(taxa2, function(x){paste0("Unclassified_", x)})
+taxid[is.na(taxid)] <- taxa2[is.na(taxid)]
+taxid <- t(taxid)
+# Remove ASV not classified as bacteria from the tax table then from the ASV matrix 
+taxid=subset(as.data.frame(taxid), Kingdom =="Bacteria")
+seqtab.nochim <- seqtab.nochim[,colnames(seqtab.nochim) %in% rownames(taxid)]
+# Save sequence table 
+write.csv(seqtab.nochim, file = "/DADA2_output/seqtab_nonchim.csv")
+
+# ----------------- Deonctam ----------------- 
+library(decontam)
+library(phyloseq)
+
+meta <- read.table("pre-process_metadata.csv", sep=",", row.names=1, header=TRUE)
+ps <- phyloseq(otu_table(t(seqtab.nochim), taxa_are_rows=TRUE), tax_table(as.matrix(taxid)), sample_data(meta))
+sample_data(ps)$is.neg <- sample_data(ps)$City == "Neg"
+
+contamdf.prev <- isContaminant(ps, method="prevalence", neg="is.neg", threshold=0.5)
+table(contamdf.prev$contaminant)
+ps.noncontam <- prune_taxa(!contamdf.prev$contaminant, ps)
+ps_decontam=subset_samples(ps.noncontam, !City=="Neg")
+``` 
+
+# Phylogenetic Tree  
+Extract sequences from phyloseq object `ps_decontam` and align them using `AlignSeqs` function from `DECIPHER` 
+```{r}
+library(dada2)
+library(DECIPHER)
+asv_tab=as.data.frame(otu_table(ps_decontam))
+seqs <- getSequences(t(asv_tab))
+names(seqs) <- seqs
+seq_align <- AlignSeqs(DNAStringSet(seqs), anchor=NA, processors=20)
+path="combined_fastq"
+writeXStringSet(seq_align, file = file.path(path,"align.fasta"),format="fasta")
+``` 
+Create tree using FastTree. FastTree is not an R library but rather a linux program and therefor these commands are written in `bash` 
+```{bash}
+cd /combined_fastq
+fasttree -nt -gtr  align.fasta > align_tree
+``` 
+
+Add midpoint rooting to tree  
+```{r}
+library(dada2)
+Tree <- ape::read.tree(file = file.path(path,"align_tree"))
+Tree.midpoint <- phangorn::midpoint(Tree)
+ape::write.tree(Tree.midpoint,file = file.path(path,"tree.midpoint"))
+``` 
+Add tree to phyloseq object 
+```{r}
+library(phyloseq)
+tree <- phy_tree(Tree.midpoint)
+ps1 <- merge_phyloseq(ps_decontam, tree)
+# Make ASV ID shorter 
+taxa_names(ps1) <- paste0("ASV", seq(ntaxa(ps1)))
+``` 
+
+Save the tables 
+```{r}
+write.csv(as.data.frame(as(tax_table(ps1), "matrix")), file = "/DADA2_output/raw_taxa.csv")
+write.csv(as.data.frame(as(otu_table(ps1), "matrix")),file = "/DADA2_output/raw_asv.csv")
+write.csv(as.data.frame(as(sample_data(ps1), "matrix")), file="/DADA2_output/raw_meta.csv")
+tree.raw <- phy_tree(ps1)
+ape::write.tree(tree.raw , file = "/DADA2_output/raw_tree.tree")
+```
