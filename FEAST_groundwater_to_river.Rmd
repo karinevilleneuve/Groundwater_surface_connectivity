@@ -1,0 +1,168 @@
+---
+title: "Spatial_connectivty"
+output: html_document
+---
+
+Load packages 
+```{r setup, include=FALSE}
+#devtools::install_github("cozygene/FEAST")
+library(FEAST)
+library(reshape2)
+library(gridExtra)
+library(scales)
+library(tidyr)
+library(ggpubr)
+```
+
+```{r}
+raw_asv=read.table("/Rarefied_meta_asv_taxa_tree/rarefied_asv.csv", sep=",", row.names=1, header=TRUE, check.names=FALSE) 
+feast_meta = read.csv("/FEAST_input/feast_input_groundwater_to_river.csv")
+filt_empty=feast_meta$analysis_id==""
+meta_clean=feast_meta[!filt_empty,]
+meta_clean=meta_clean[!apply(is.na(meta_clean) | meta_clean == "", 1, all),]
+```
+
+Run FEAST analysis 
+```{r}
+path="/feast_out_groundwater_to_river"
+for (analysis in unique(meta_clean$analysis_id)){
+  sink_and_source=subset(meta_clean, analysis_id==analysis) # Extract from the metadata file the analysis to be done. 
+  names(sink_and_source)=sink_and_source[1,] # Set first row as header
+  sink_and_source=sink_and_source[-1,-1] # Delete first row and column
+  # The metadata is now ready to be used with FEAST
+  # Extract samples included in the metadata from the count matrix 
+  rownames(sink_and_source) <- sink_and_source[,1] # set the first column containing the sample ID as row names 
+  common.sample.ids <- intersect(rownames(t(raw_asv)), rownames(sink_and_source)) # Identify common samples between ASV and metadata
+  asv <- t(raw_asv)[common.sample.ids,] # Extract from the asv table only the samples listed in common.sample.ids
+  # The ASV and metadata tables are now ready for FEAST 
+  FEAST_output = FEAST(C=asv, metadata=sink_and_source, different_sources_flag = 1, dir_path=path, outfile=analysis)
+} 
+```
+
+Combine FEAST output in one single data frame 
+```{r}
+path="/feast_out_groundwater_to_river"
+file_names <- list.files(path, full.names = T)
+
+df=data.frame()
+
+for (out_feast in unique(file_names)){
+  out_df=read.csv(out_feast,sep="\t")
+  out_df=out_df %>% tibble::rownames_to_column(var="Sink") # Set row name as first column values
+  df_melt=melt(out_df, id=c("Sink")) # Melt to long format
+  df=rbind(df,df_melt) # Populate empty dataframe 
+} 
+```
+
+Modify generated dataframe
+```{r}
+df$City=ifelse(grepl("SL", df$Sink), "Saint-Lazare", "Rigaud") # Add column for city 
+df_clean=na.omit(df) # remove rows with NA 
+df_clean$variable=gsub(".*_","",df_clean$variable) # Remove every characters before underscore
+
+df_clean$Sink=gsub(".*_","",df_clean$Sink)
+df_clean$Sources=gsub("\\.\\.","\\. ",df_clean$variable)
+df_clean$Sources=gsub("y\\.","y",df_clean$Sources)
+df_clean$Sources=gsub("e\\.","e",df_clean$Sources)
+
+df_clean$Month=gsub(" river", "", df_clean$Sink) # Add column for months 
+df_clean$Month=gsub("y\\.","y",df_clean$Month)
+df_clean$Month=gsub("e\\.","e",df_clean$Month)
+
+# Adding value for missing February and March river 
+df_clean[nrow(df_clean)+1,]=list("Feb. river", "Missing data", 1, "Saint-Lazare", "Missing data", "Feb.") # Adding missing February for Saint-Lazare
+df_clean[nrow(df_clean)+1,]=list("Feb. river", "Missing data", 1, "Rigaud", "Missing data", "Feb.") # Adding missing February for Rigaud 
+df_clean[nrow(df_clean)+1,]=list("Mar. river", "Missing data", 1, "Rigaud", "Missing data", "Mar.")# Adding missing March for Rigaud 
+
+
+# Order sources and months as a factor
+df_clean$Sources=factor(df_clean$Sources, levels=c("Missing data", "Unknown", "Sep. groundwater","Oct. groundwater","Nov. groundwater",
+                                                   "Dec. groundwater","Jan. groundwater","Feb. groundwater","Mar. groundwater","Apr. groundwater",
+                                                   "May groundwater","June groundwater","July groundwater","Nov. snow","Jan. snow", "Feb. snow", 
+                                                   "Mar. snow","Sep. river","Oct. river","Nov. river","Dec. river","Jan. river","Mar. river",
+                                                   "Apr. river","May river","June river","July river")) 
+
+df_clean$Month=factor(df_clean$Month, levels=c("Oct.","Nov.","Dec.","Jan.","Feb.","Mar.","Apr.","May","June","July","Aug."))
+```
+
+Create color palette 
+```{r}
+unique_sources=data.frame(unique(df_clean$Sources))
+colors=read.csv("color_groundwater_to_river.csv", header=FALSE, row.names = 1)
+tcolors=t(colors)
+my_scale1=scale_fill_manual(name=as.character(unique_sources), values = tcolors, na.translate=FALSE, drop=FALSE, limits = force)
+```
+
+```{r}
+R=subset(df_clean, City=="Rigaud")
+sl=subset(df_clean, City=="Saint-Lazare")
+
+r_plot_feast=ggplot(R, aes(x = Month, fill=Sources, y=value)) + 
+  scale_x_discrete(limits = rev(levels(R$Month)), expand = c(0, 0)) +
+  scale_y_continuous(labels=function(x) paste0(x*100), limits=c(0,1.1), expand = c(0, 0)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(title="Rigaud",  y = " ", x= " ") + 
+  theme(text = element_text(size=12),
+        legend.justification = "center",
+        legend.position="bottom", 
+        plot.title = element_text(hjust =0.5, size=12),
+        axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank(), 
+        panel.background = element_rect(fill="white")) +
+  my_scale1 + 
+  guides(fill=guide_legend(nrow=6, title="Sources", title.position="top", title.hjust = 0.55))
+
+sl_plot_feast=ggplot(sl, aes(x = Month, fill=Sources, y=value)) + 
+  scale_x_discrete(limits = rev(levels(sl$Month)), expand = c(0, 0)) +
+  scale_y_continuous(labels=function(x) paste0(x*100), limits=c(0,1.1), expand = c(0, 0)) +
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(title="Saint-Lazare", y="", x= "Sink (river)") + 
+  theme(text = element_text(size=12),
+        legend.justification = "center",
+        legend.position="bottom", 
+        plot.title = element_text(hjust =0.5, size=12),
+        axis.ticks.y=element_blank(),
+        panel.background = element_rect(fill="white")) +
+  my_scale1 
+
+
+# Extract legend from r_plot_feast
+get_legend=function(myggplot){
+  tmp=ggplot_gtable(ggplot_build(myggplot))
+  leg=which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend=tmp$grobs[[leg]]
+  return(legend)
+}
+
+legend=as_ggplot(get_legend(r_plot_feast))
+
+# Combine plots and legend 
+combined_plot=ggarrange(ggarrange(sl_plot_feast, r_plot_feast, ncol=2, labels=c("a","b"), legend="none", widths =c(1,0.985)), legend, nrow=2, heights=c(1,0.4)) + 
+  annotate("text", x=0.55, y=0.30, label = "Source proportion (%)", size = 4)
+``` 
+Save plot 
+```{r}
+ggsave("feast_groundwater_to_river.pdf",plot=combined_plot, device="pdf", path="/image/", width=16.5, height = 16.5, units = "cm")
+```
+
+Generate table 
+```{r}
+R=subset(df_clean, City=="Rigaud")
+sl=subset(df_clean, City=="Saint-Lazare")
+
+R$percentage=percent(R$value, accuracy =0.01)
+R$groups=gsub(".*? ","",R$Sources) # Remove every characters before space
+agg_r=aggregate(R$value, by=list(R$groups), FUN=mean) 
+agg_r$percentage=percent(agg_r$x, accuracy=0.01)
+
+sl$percentage=percent(sl$value, accuracy = 0.01)
+sl$groups=gsub(".*? ","",sl$Sources) # Remove every characters before space
+agg_sl=aggregate(sl$value, by=list(sl$groups), FUN=mean) 
+agg_sl$percentage=percent(agg_sl$x, accuracy=0.01)
+
+write.table(R, "/FEAST_ouput_combined/FEAST_out_Rigaud_river.csv", quote=FALSE, sep=",", row.names = FALSE)
+write.table(sl, "/FEAST_ouput_combined/FEAST_out_SaintLaz_river.csv", quote=FALSE, sep=",", row.names = FALSE)
+```
+

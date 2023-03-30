@@ -1,0 +1,99 @@
+Sink,variable,value,City,Sources,Month,percentage,groups
+May groundwater,Apr..groundwater,0.00641185992472049,Rigaud,Apr. groundwater,May,0.64%,groundwater
+May groundwater,Mar..groundwater,0.0115067248896244,Rigaud,Mar. groundwater,May,1.15%,groundwater
+May groundwater,Feb..groundwater,0.389329044275327,Rigaud,Feb. groundwater,May,38.93%,groundwater
+May groundwater,Feb..snow,0.00632702384714835,Rigaud,Feb. snow,May,0.63%,snow
+May groundwater,Mar..snow,0.00504779985315222,Rigaud,Mar. snow,May,0.50%,snow
+May groundwater,Apr..soil,0.00330760714882395,Rigaud,Apr. soil,May,0.33%,soil
+May groundwater,Apr..river,0.0703490938044578,Rigaud,Apr. river,May,7.03%,river
+May groundwater,Unknown,0.507720846256746,Rigaud,Unknown,May,50.77%,Unknown
+Jan. groundwater,Dec..groundwater,0.100164216689369,Rigaud,Dec. groundwater,Jan.,10.02%,groundwater
+Jan. groundwater,Nov..groundwater,0.126875647718971,Rigaud,Nov. groundwater,Jan.,12.69%,groundwater
+Jan. groundwater,Oct..groundwater,0.242720215358602,Rigaud,Oct. groundwater,Jan.,24.27%,groundwater
+Jan. groundwater,Oct..soil,0.00499978843148015,Rigaud,Oct. soil,Jan.,0.50%,soil
+Jan. groundwater,Nov..soil,0.000675973244597539,Rigaud,Nov. soil,Jan.,0.07%,soil
+Jan. groundwater,Dec..soil,3.08955946558343e-10,Rigaud,Dec. soil,Jan.,0.00%,soil
+Jan. groundwater,Nov..snow,0.00892458673509722,Rigaud,Nov. snow,Jan.,0.89%,snow
+Jan. groundwater,Oct..river,2.58607960476151e-10,Rigaud,Oct. river,Jan.,0.00%,river
+Jan. groundwater,Nov..river,0.0117210614861895,Rigaud,Nov. river,Jan.,1.17%,river
+Jan. groundwater,Dec..river,0.00514588458592421,Rigaud,Dec. river,Jan.,0.51%,river
+Jan. groundwater,Unknown,0.498772625182206,Rigaud,Unknown,Jan.,49.88%,Unknown
+Mar. groundwater,Feb..groundwater,0.0199093646743299,Rigaud,Feb. groundwater,Mar.,1.99%,groundwater
+Mar. groundwater,Jan..groundwater,0.00657632395037517,Rigaud,Jan. groundwater,Mar.,0.66%,groundwater
+Mar. groundwater,Dec..groundwater,7.5071238883176e-05,Rigaud,Dec. groundwater,Mar.,0.01%,groundwater
+Mar. groundwater,Dec..soil,0.00232050350033774,Rigaud,Dec. soil,Mar.,0.23%,soil
+Mar. groundwater,Jan..snow,0.447333192580819,Rigaud,Jan. snow,Mar.,44.73%,snow
+Mar. groundwater,Feb..snow,0.181179392653753,Rigaud,Feb. snow,Mar.,18.12%,snow
+Mar. groundwater,Dec..river,0.0143928146634845,Rigaud,Dec. river,Mar.,1.44%,river
+Mar. groundwater,Jan..river,0.0392370075680477,Rigaud,Jan. river,Mar.,3.92%,river
+Mar. groundwater,Unknown,0.28897632916997,Rigaud,Unknown,Mar.,28.90%,Unknown
+Feb. groundwater,Jan..groundwater,0.410175678350621,Rigaud,Jan. groundwater,Feb.,41.02%,groundwater
+Feb. groundwater,Dec..groundwater,0.00651015336740037,Rigaud,Dec. groundwater,Feb.,0.65%,groundwater
+Feb. groundwater,Nov..groundwater,0.139801801893554,Rigaud,Nov. groundwater,Feb.,13.98%,groundwater
+Feb. groundwater,Nov..soil,2.23284944968505e-05,Rigaud,Nov. soil,Feb.,0.00%,soil
+Feb. groundwater,Dec..soil,0.000797398207784528,Rigaud,Dec. soil,Feb.,0.08%,soil
+Feb. groundwater,Nov..snow,8.18752735611033e-07,Rigaud,Nov. snow,Feb.,0.00%,snow
+Feb. groundwater,Jan..snow,0.00164414026287698,Rigaud,Jan. snow,Feb.,0.16%,snow
+Feb. groundwater,Nov..river,0.00291178244498579,Rigaud,Nov. river,Feb.,0.29%,river
+Feb. groundwater,Dec..river,0.00462168220252307,Rigaud,Dec. river,Feb.,0.46%,river
+Feb. groundwater,Jan..river,0.00735368274921258,Rigaud,Jan. river,Feb.,0.74%,river
+Feb. groundwater,Unknown,0.426160533273809,Rigaud,Unknown,Feb.,42.62%,Unknown
+Aug. groundwater,July.groundwater,0.0127860365056947,Rigaud,July groundwater,Aug.,1.28%,groundwater
+Aug. groundwater,June.groundwater,0.26348071775909,Rigaud,June groundwater,Aug.,26.35%,groundwater
+Aug. groundwater,May.groundwater,0.0233754891264426,Rigaud,May groundwater,Aug.,2.34%,groundwater
+Aug. groundwater,May.soil,2.28739798688251e-28,Rigaud,May soil,Aug.,0.00%,soil
+Aug. groundwater,June.soil,0,Rigaud,June soil,Aug.,0.00%,soil
+Aug. groundwater,July.soil,4.89066245471844e-63,Rigaud,July soil,Aug.,0.00%,soil
+Aug. groundwater,May.river,2.39102252485953e-19,Rigaud,May river,Aug.,0.00%,river
+Aug. groundwater,June.river,0.00692847379073794,Rigaud,June river,Aug.,0.69%,river
+Aug. groundwater,July.river,2.08375385767957e-10,Rigaud,July river,Aug.,0.00%,river
+Aug. groundwater,Unknown,0.69342928260966,Rigaud,Unknown,Aug.,69.34%,Unknown
+July groundwater,June.groundwater,0.0125830163461454,Rigaud,June groundwater,July,1.26%,groundwater
+July groundwater,May.groundwater,0.616370630281364,Rigaud,May groundwater,July,61.64%,groundwater
+July groundwater,Apr..groundwater,8.87619338359283e-22,Rigaud,Apr. groundwater,July,0.00%,groundwater
+July groundwater,Apr..soil,0.000568504322916213,Rigaud,Apr. soil,July,0.06%,soil
+July groundwater,May.soil,8.14421865481474e-05,Rigaud,May soil,July,0.01%,soil
+July groundwater,June.soil,0.102828431747231,Rigaud,June soil,July,10.28%,soil
+July groundwater,Apr..river,0.0117524521011314,Rigaud,Apr. river,July,1.18%,river
+July groundwater,May.river,0.00846974804883722,Rigaud,May river,July,0.85%,river
+July groundwater,June.river,0.00566720748736187,Rigaud,June river,July,0.57%,river
+July groundwater,Unknown,0.241678567478465,Rigaud,Unknown,July,24.17%,Unknown
+Apr. groundwater,Mar..groundwater,0.309634573333382,Rigaud,Mar. groundwater,Apr.,30.96%,groundwater
+Apr. groundwater,Feb..groundwater,4.16349195287149e-77,Rigaud,Feb. groundwater,Apr.,0.00%,groundwater
+Apr. groundwater,Jan..groundwater,2.78045097970021e-112,Rigaud,Jan. groundwater,Apr.,0.00%,groundwater
+Apr. groundwater,Jan..snow,2.50055894024918e-07,Rigaud,Jan. snow,Apr.,0.00%,snow
+Apr. groundwater,Feb..snow,0.00176905255123912,Rigaud,Feb. snow,Apr.,0.18%,snow
+Apr. groundwater,Mar..snow,3.19213692878565e-20,Rigaud,Mar. snow,Apr.,0.00%,snow
+Apr. groundwater,Jan..river,0.000876019504456918,Rigaud,Jan. river,Apr.,0.09%,river
+Apr. groundwater,Unknown,0.687720104555028,Rigaud,Unknown,Apr.,68.77%,Unknown
+June groundwater,May.groundwater,0.0124884121361114,Rigaud,May groundwater,June,1.25%,groundwater
+June groundwater,Apr..groundwater,0.0134501505292469,Rigaud,Apr. groundwater,June,1.35%,groundwater
+June groundwater,Mar..groundwater,2.20962012629834e-16,Rigaud,Mar. groundwater,June,0.00%,groundwater
+June groundwater,Apr..soil,0,Rigaud,Apr. soil,June,0.00%,soil
+June groundwater,May.soil,0,Rigaud,May soil,June,0.00%,soil
+June groundwater,Mar..snow,0.0328746092173482,Rigaud,Mar. snow,June,3.29%,snow
+June groundwater,Apr..river,5.49247188202575e-27,Rigaud,Apr. river,June,0.00%,river
+June groundwater,May.river,1.53295408932341e-17,Rigaud,May river,June,0.00%,river
+June groundwater,Unknown,0.941186828117293,Rigaud,Unknown,June,94.12%,Unknown
+Dec. groundwater,Nov..groundwater,0.0653072347924337,Rigaud,Nov. groundwater,Dec.,6.53%,groundwater
+Dec. groundwater,Oct..groundwater,0.061872028920202,Rigaud,Oct. groundwater,Dec.,6.19%,groundwater
+Dec. groundwater,Sep..groundwater,0.119519577831308,Rigaud,Sep. groundwater,Dec.,11.95%,groundwater
+Dec. groundwater,Sep..soil,1.78411533996716e-15,Rigaud,Sep. soil,Dec.,0.00%,soil
+Dec. groundwater,Oct..soil,1.56730947736772e-09,Rigaud,Oct. soil,Dec.,0.00%,soil
+Dec. groundwater,Nov..soil,0.000956468146452606,Rigaud,Nov. soil,Dec.,0.10%,soil
+Dec. groundwater,Nov..snow,0.000439555160868172,Rigaud,Nov. snow,Dec.,0.04%,snow
+Dec. groundwater,Sep..river,1.0187349642323e-36,Rigaud,Sep. river,Dec.,0.00%,river
+Dec. groundwater,Oct..river,0.000759677812873469,Rigaud,Oct. river,Dec.,0.08%,river
+Dec. groundwater,Nov..river,0.0012217455116545,Rigaud,Nov. river,Dec.,0.12%,river
+Dec. groundwater,Unknown,0.749923710256897,Rigaud,Unknown,Dec.,74.99%,Unknown
+Nov. groundwater,Oct..groundwater,0.237566752190843,Rigaud,Oct. groundwater,Nov.,23.76%,groundwater
+Nov. groundwater,Sep..groundwater,0.0403442390359274,Rigaud,Sep. groundwater,Nov.,4.03%,groundwater
+Nov. groundwater,Sep..soil,0.000699056313600653,Rigaud,Sep. soil,Nov.,0.07%,soil
+Nov. groundwater,Oct..soil,0.00193574626010947,Rigaud,Oct. soil,Nov.,0.19%,soil
+Nov. groundwater,Sep..river,0.000868502149049832,Rigaud,Sep. river,Nov.,0.09%,river
+Nov. groundwater,Oct..river,0.00555582275084206,Rigaud,Oct. river,Nov.,0.56%,river
+Nov. groundwater,Unknown,0.713029881299628,Rigaud,Unknown,Nov.,71.30%,Unknown
+Oct. groundwater,Sep..groundwater,0.171040446806368,Rigaud,Sep. groundwater,Oct.,17.10%,groundwater
+Oct. groundwater,Sep..soil,0.00425204628166593,Rigaud,Sep. soil,Oct.,0.43%,soil
+Oct. groundwater,Sep..river,0.00245748309764441,Rigaud,Sep. river,Oct.,0.25%,river
+Oct. groundwater,Unknown,0.822250023814322,Rigaud,Unknown,Oct.,82.23%,Unknown

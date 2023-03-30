@@ -1,0 +1,75 @@
+Sink,variable,value,City,Sources,Month,percentage,groups
+May groundwater,Apr..groundwater,0.104091530941557,Saint-Lazare,Apr. groundwater,May,10.41%,groundwater
+May groundwater,Mar..groundwater,0.114531453073667,Saint-Lazare,Mar. groundwater,May,11.45%,groundwater
+May groundwater,Feb..groundwater,0.393521625386088,Saint-Lazare,Feb. groundwater,May,39.35%,groundwater
+May groundwater,Feb..snow,0.00845403634378867,Saint-Lazare,Feb. snow,May,0.85%,snow
+May groundwater,Mar..snow,0.00150883364988054,Saint-Lazare,Mar. snow,May,0.15%,snow
+May groundwater,Apr..soil,0.0193558883455868,Saint-Lazare,Apr. soil,May,1.94%,soil
+May groundwater,Unknown,0.358536632259432,Saint-Lazare,Unknown,May,35.85%,Unknown
+Jan. groundwater,Dec..groundwater,0.148306683240203,Saint-Lazare,Dec. groundwater,Jan.,14.83%,groundwater
+Jan. groundwater,Nov..groundwater,0.615076156731069,Saint-Lazare,Nov. groundwater,Jan.,61.51%,groundwater
+Jan. groundwater,Oct..groundwater,0.0475024041171507,Saint-Lazare,Oct. groundwater,Jan.,4.75%,groundwater
+Jan. groundwater,Sep..soil,0.00173040339060972,Saint-Lazare,Sep. soil,Jan.,0.17%,soil
+Jan. groundwater,Nov..soil,0.00972530942715468,Saint-Lazare,Nov. soil,Jan.,0.97%,soil
+Jan. groundwater,Dec..soil,2.02913902312456e-12,Saint-Lazare,Dec. soil,Jan.,0.00%,soil
+Jan. groundwater,Nov..snow,0.00631982297552496,Saint-Lazare,Nov. snow,Jan.,0.63%,snow
+Jan. groundwater,Unknown,0.171339220116259,Saint-Lazare,Unknown,Jan.,17.13%,Unknown
+Mar. groundwater,Feb..groundwater,0.733582516073807,Saint-Lazare,Feb. groundwater,Mar.,73.36%,groundwater
+Mar. groundwater,Jan..groundwater,0.107017048361958,Saint-Lazare,Jan. groundwater,Mar.,10.70%,groundwater
+Mar. groundwater,Dec..groundwater,0.00924305170674504,Saint-Lazare,Dec. groundwater,Mar.,0.92%,groundwater
+Mar. groundwater,Dec..soil,2.86553135864874e-59,Saint-Lazare,Dec. soil,Mar.,0.00%,soil
+Mar. groundwater,Jan..snow,0.00335592644872671,Saint-Lazare,Jan. snow,Mar.,0.34%,snow
+Mar. groundwater,Feb..snow,1.20246087023173e-97,Saint-Lazare,Feb. snow,Mar.,0.00%,snow
+Mar. groundwater,Unknown,0.146801457408763,Saint-Lazare,Unknown,Mar.,14.68%,Unknown
+Feb. groundwater,Jan..groundwater,0.658602005353824,Saint-Lazare,Jan. groundwater,Feb.,65.86%,groundwater
+Feb. groundwater,Dec..groundwater,0.0169082381612268,Saint-Lazare,Dec. groundwater,Feb.,1.69%,groundwater
+Feb. groundwater,Nov..groundwater,0.119607946094184,Saint-Lazare,Nov. groundwater,Feb.,11.96%,groundwater
+Feb. groundwater,Nov..soil,0.00681978140689102,Saint-Lazare,Nov. soil,Feb.,0.68%,soil
+Feb. groundwater,Dec..soil,0.00489071531761861,Saint-Lazare,Dec. soil,Feb.,0.49%,soil
+Feb. groundwater,Nov..snow,0.00189651115355348,Saint-Lazare,Nov. snow,Feb.,0.19%,snow
+Feb. groundwater,Jan..snow,0.00113662114549982,Saint-Lazare,Jan. snow,Feb.,0.11%,snow
+Feb. groundwater,Unknown,0.190138181367202,Saint-Lazare,Unknown,Feb.,19.01%,Unknown
+Aug. groundwater,July.groundwater,0.789755683120517,Saint-Lazare,July groundwater,Aug.,78.98%,groundwater
+Aug. groundwater,June.groundwater,8.53542352240955e-06,Saint-Lazare,June groundwater,Aug.,0.00%,groundwater
+Aug. groundwater,May.groundwater,0.0174376813911821,Saint-Lazare,May groundwater,Aug.,1.74%,groundwater
+Aug. groundwater,May.soil,0,Saint-Lazare,May soil,Aug.,0.00%,soil
+Aug. groundwater,June.soil,0,Saint-Lazare,June soil,Aug.,0.00%,soil
+Aug. groundwater,July.soil,0,Saint-Lazare,July soil,Aug.,0.00%,soil
+Aug. groundwater,Unknown,0.192798100064779,Saint-Lazare,Unknown,Aug.,19.28%,Unknown
+July groundwater,June.groundwater,0.032612503909513,Saint-Lazare,June groundwater,July,3.26%,groundwater
+July groundwater,May.groundwater,0.0816397877402061,Saint-Lazare,May groundwater,July,8.16%,groundwater
+July groundwater,Apr..groundwater,0.756401017805869,Saint-Lazare,Apr. groundwater,July,75.64%,groundwater
+July groundwater,Apr..soil,1.86758944581238e-09,Saint-Lazare,Apr. soil,July,0.00%,soil
+July groundwater,May.soil,0.000568009189102862,Saint-Lazare,May soil,July,0.06%,soil
+July groundwater,June.soil,2.56747717205366e-08,Saint-Lazare,June soil,July,0.00%,soil
+July groundwater,Unknown,0.128778653812948,Saint-Lazare,Unknown,July,12.88%,Unknown
+Apr. groundwater,Mar..groundwater,0.520404660377092,Saint-Lazare,Mar. groundwater,Apr.,52.04%,groundwater
+Apr. groundwater,Feb..groundwater,0.0381138068696923,Saint-Lazare,Feb. groundwater,Apr.,3.81%,groundwater
+Apr. groundwater,Jan..groundwater,0.061059360365487,Saint-Lazare,Jan. groundwater,Apr.,6.11%,groundwater
+Apr. groundwater,Jan..snow,0.189338320715812,Saint-Lazare,Jan. snow,Apr.,18.93%,snow
+Apr. groundwater,Feb..snow,3.81811283228893e-16,Saint-Lazare,Feb. snow,Apr.,0.00%,snow
+Apr. groundwater,Mar..snow,3.04060074896443e-07,Saint-Lazare,Mar. snow,Apr.,0.00%,snow
+Apr. groundwater,Unknown,0.191083547611842,Saint-Lazare,Unknown,Apr.,19.11%,Unknown
+June groundwater,May.groundwater,0.590587649724689,Saint-Lazare,May groundwater,June,59.06%,groundwater
+June groundwater,Apr..groundwater,0.027695694341339,Saint-Lazare,Apr. groundwater,June,2.77%,groundwater
+June groundwater,Mar..groundwater,0.01548216653297,Saint-Lazare,Mar. groundwater,June,1.55%,groundwater
+June groundwater,Apr..soil,0.00936366719158845,Saint-Lazare,Apr. soil,June,0.94%,soil
+June groundwater,May.soil,0.0161694974756247,Saint-Lazare,May soil,June,1.62%,soil
+June groundwater,Mar..snow,1.53882018394464e-26,Saint-Lazare,Mar. snow,June,0.00%,snow
+June groundwater,Unknown,0.340701324733789,Saint-Lazare,Unknown,June,34.07%,Unknown
+Dec. groundwater,Nov..groundwater,0.425006265986203,Saint-Lazare,Nov. groundwater,Dec.,42.50%,groundwater
+Dec. groundwater,Oct..groundwater,0.0383450730786295,Saint-Lazare,Oct. groundwater,Dec.,3.83%,groundwater
+Dec. groundwater,Sep..groundwater,0.0616675777383555,Saint-Lazare,Sep. groundwater,Dec.,6.17%,groundwater
+Dec. groundwater,Sep..soil,0.00342282332168778,Saint-Lazare,Sep. soil,Dec.,0.34%,soil
+Dec. groundwater,Oct..soil,0.0082212380863822,Saint-Lazare,Oct. soil,Dec.,0.82%,soil
+Dec. groundwater,Nov..soil,0.085688247798438,Saint-Lazare,Nov. soil,Dec.,8.57%,soil
+Dec. groundwater,Nov..snow,0.0185117151022473,Saint-Lazare,Nov. snow,Dec.,1.85%,snow
+Dec. groundwater,Unknown,0.359137058888057,Saint-Lazare,Unknown,Dec.,35.91%,Unknown
+Nov. groundwater,Oct..groundwater,0.102152933849994,Saint-Lazare,Oct. groundwater,Nov.,10.22%,groundwater
+Nov. groundwater,Sep..groundwater,0.582834764316881,Saint-Lazare,Sep. groundwater,Nov.,58.28%,groundwater
+Nov. groundwater,Sep..soil,0.0218029919636427,Saint-Lazare,Sep. soil,Nov.,2.18%,soil
+Nov. groundwater,Oct..soil,0.000799601775915413,Saint-Lazare,Oct. soil,Nov.,0.08%,soil
+Nov. groundwater,Unknown,0.292409708093567,Saint-Lazare,Unknown,Nov.,29.24%,Unknown
+Oct. groundwater,Sep..groundwater,0.6877158001238,Saint-Lazare,Sep. groundwater,Oct.,68.77%,groundwater
+Oct. groundwater,Sep..soil,0.0433171381418365,Saint-Lazare,Sep. soil,Oct.,4.33%,soil
+Oct. groundwater,Unknown,0.268967061734364,Saint-Lazare,Unknown,Oct.,26.90%,Unknown
