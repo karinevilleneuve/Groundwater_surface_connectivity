@@ -1,0 +1,227 @@
+---
+title: "Getting water level and temperature"
+author: "Karine Villeneuve"
+date: "07/12/2022"
+output: html_document
+---
+Data for groundwater level and temperature was collected and provided to me by the laboratory of Marie Larocque as well as Florent Barbecot at the University of Quebec in Montreal.
+The files contained all the groundwater temperature and level above the probe for each hour of the day from January 1th 2019 until December 31 2020. I used this script in order to extract only the data from the day I sampled and to remove outliers produced by sampling. Finally, the hourly measured were averaged to obtain only one measure per day (daily average)
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "/Users/karinevilleneuve/OneDrive - UQAM/DOCTORAT/Projects/Chapitre-1_Spatial/Hydrogeo_data/")
+library(ggplot2)
+library(dplyr)
+library(ggpubr)
+``` 
+Load data sets
+```{r}
+piezo_r=read.table("piezo_r.csv", sep=",",header=TRUE) # measures from the Rigaud probe
+piezo_sl=read.table("piezo_sl.csv", sep=",",header=TRUE) # measures from the Saint-Lazare probe
+```
+
+```{r}
+piezo_r$City="Rigaud"
+piezo_sl$City="Saint-Lazare"
+piezo=rbind(piezo_r,piezo_sl)
+piezo$City_date=paste(piezo$City, piezo$Date, sep="_") # Create a new column combining dates and city 
+piezo$Date=as.Date(piezo$Date) # Change column to Date format
+piezo$month=months(piezo$Date) # Extract only the month
+piezo$year=gsub("-.*","",piezo$Date) # Combine month and year
+piezo$Month_year=paste(piezo$month, piezo$year, sep=" ")
+``` 
+Remove daily outliers for groundwater level and temperature 
+```{r}
+# Remove daily outliers 
+temp_list_daily=list()
+lev_list_daily=list()
+i = 0
+for (each_date in unique(piezo$City_date)){
+  i=i+1
+  date_df=subset(piezo, City_date==each_date)
+  # Remove outliers for temperature 
+  temp_quartiles=quantile(date_df$TEMPERATURE, probs=c(.25, .75), na.rm=FALSE)
+  temp_IQR=IQR(date_df$TEMPERATURE)
+  temp_Lower=temp_quartiles[1] - 1.5*temp_IQR
+  temp_Upper=temp_quartiles[2]+1.5*temp_IQR
+  temp_no_out=subset(date_df, date_df$TEMPERATURE > temp_Lower & date_df$TEMPERATURE < temp_Upper)
+  temp_list_daily[[i]]=temp_no_out
+  # Remove outliers for level
+  lev_quartiles=quantile(date_df$LEVEL, probs=c(.25, .75), na.rm=FALSE)
+  lev_IQR=IQR(date_df$LEVEL)
+  lev_Lower=lev_quartiles[1] - 1.5*lev_IQR
+  lev_Upper=lev_quartiles[2]+1.5*lev_IQR
+  lev_no_out=subset(date_df, date_df$LEVEL > lev_Lower & date_df$LEVEL < lev_Upper)
+  lev_list_daily[[i]]=lev_no_out
+}
+temp_daily=do.call("rbind",temp_list_daily)
+level_daily=do.call("rbind",lev_list_daily)
+```
+Remove monthly outliers from groundwater level and temperature 
+```{r}
+# Temperature 
+temp_list_montly=list()
+i = 0
+for (each_date in unique(temp_daily$Month_year)){
+  i=i+1
+  date_df=subset(temp_daily, Month_year==each_date)
+  temp_quartiles=quantile(date_df$TEMPERATURE, probs=c(.25, .75), na.rm=FALSE)
+  temp_IQR=IQR(date_df$TEMPERATURE)
+  temp_Lower=temp_quartiles[1] - 1.5*temp_IQR
+  temp_Upper=temp_quartiles[2]+1.5*temp_IQR
+  temp_no_out=subset(date_df, date_df$TEMPERATURE > temp_Lower & date_df$TEMPERATURE < temp_Upper)
+  temp_list_montly[[i]]=temp_no_out
+}
+temp_df=do.call("rbind",temp_list_montly)
+# Level
+level_list_montly=list()
+i = 0
+
+for (each_date in unique(level_daily$Month_year)){
+  i=i+1
+  date_df=subset(level_daily, Month_year==each_date)
+  lev_quartiles=quantile(date_df$LEVEL, probs=c(.25, .75), na.rm=FALSE)
+  lev_IQR=IQR(date_df$LEVEL)
+  lev_Lower=lev_quartiles[1] - 1.5*lev_IQR
+  lev_Upper=lev_quartiles[2]+1.5*lev_IQR
+  lev_no_out=subset(date_df, date_df$LEVEL > lev_Lower & date_df$LEVEL < lev_Upper)
+  level_list_montly[[i]]=lev_no_out
+}
+level_df=do.call("rbind",level_list_montly)
+``` 
+Combine hourly measures in daily average
+```{r}
+# Combine but keep columns 
+mean_daily_temperature=temp_df %>% 
+  group_by(City_date) %>% 
+  mutate(mean_daily_temperature=mean(TEMPERATURE)) %>% 
+  ungroup() %>%
+  distinct(City_date, .keep_all = TRUE) # Remove duplicate
+
+
+mean_daily_level=level_df %>% 
+  group_by(City_date) %>% 
+  mutate(mean_daily_level=mean(LEVEL)) %>% 
+  ungroup() %>%
+  distinct(City_date, .keep_all = TRUE) # Remove duplicate
+
+# Remove columns we don't need anymore
+mean_daily_level=subset(mean_daily_level, select=-c(Time, ms, TEMPERATURE, LEVEL))
+mean_daily_temperature=subset(mean_daily_temperature, select=-c(Time, ms, LEVEL, TEMPERATURE))
+```
+Order levels chronologically 
+```{r}
+mean_daily_temperature$Month_year=factor(mean_daily_temperature$Month_year, levels=c("January 2019","February 2019","March 2019","April 2019",
+                                                       "May 2019","June 2019","July 2019","August 2019","September 2019",
+                                                       "October 2019","November 2019","December 2019","January 2020",
+                                                       "February 2020","March 2020","April 2020","May 2020","June 2020",
+                                                       "July 2020","August 2020","September 2020","October 2020",
+                                                       "November 2020","December 2020"))
+mean_daily_level$Month_year=factor(mean_daily_level$Month_year, levels=c("January 2019","February 2019","March 2019","April 2019",
+                                                       "May 2019","June 2019","July 2019","August 2019","September 2019",
+                                                       "October 2019","November 2019","December 2019","January 2020",
+                                                       "February 2020","March 2020","April 2020","May 2020","June 2020",
+                                                       "July 2020","August 2020","September 2020","October 2020",
+                                                       "November 2020","December 2020"))
+# Seperate dataframe according to city
+rigaud_temperature=subset(mean_daily_temperature, City=="Rigaud")
+rigaud_level=subset(mean_daily_level, City=="Rigaud")
+saintlaz_temperature=subset(mean_daily_temperature, City=="Saint-Lazare")
+saintlaz_level=subset(mean_daily_level, City=="Saint-Lazare")
+```
+Plot the results
+```{r}
+# plotting results for Saint-Lazare (a)
+sl_temp_plot= ggplot(saintlaz_temperature, aes(Month_year, y=mean_daily_temperature)) + 
+  geom_boxplot(outlier.color=NA) +
+  labs(title="Saint-Lazare", y="Temperature (°C)") +
+  theme_classic() +
+  scale_y_continuous(limits=c(0,12), expand = c(0,0), n.breaks = 5) + # remove space between 0 and x axis
+  theme(text = element_text(size=12, face="plain"), 
+        panel.grid.major.x = element_line(color = "gray", size = 0.2,linetype = 3), 
+        legend.justification = "center",
+        legend.position="bottom", 
+        plot.title = element_text(hjust =0.5, size=12, face="plain"),
+        axis.text.x = element_blank(), 
+        axis.ticks.x=element_blank(), 
+        axis.title.x = element_blank()) +
+  annotate("rect", xmin="September 2019",xmax = "August 2020",ymin =0, ymax = Inf,
+           alpha =0.1,fill = "blue") # Add blue rectangle representing sampling period 
+
+sl_level_plot= ggplot(saintlaz_level, aes(Month_year, y=mean_daily_level)) + 
+  geom_boxplot(outlier.color=NA) +
+  labs(y="Level (m)") +
+  theme_classic() +
+  scale_y_continuous(limits=c(0,4), expand = c(0,0), n.breaks = 5) + # remove space between 0 and x axis
+  theme(text = element_text(size=12, face="plain"),
+        panel.grid.major.x = element_line(color = "gray", size = 0.2,linetype = 3), 
+        legend.justification = "center",
+        legend.position="bottom", 
+        plot.title = element_text(hjust =0.5, size=12,face="plain"),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=9), 
+        axis.title.x=element_blank()) + 
+  annotate("rect", xmin="September 2019",xmax = "August 2020",ymin =0, ymax = Inf,
+           alpha =0.1,fill = "blue") # Add blue rectangle representing sampling period 
+
+
+r_level_plot= ggplot(rigaud_level, aes(Month_year, y=mean_daily_level)) + 
+  geom_boxplot(outlier.color=NA) +
+  labs(x= "Date") +
+  theme_classic() +
+  scale_y_continuous(limits=c(0,4), expand = c(0,0)) + # remove space between 0 and x axis
+  theme(text = element_text(size=12,face="plain"),
+        panel.grid.major.x = element_line(color = "gray", size = 0.2,linetype = 3), 
+        legend.justification = "center",
+        legend.position="bottom", 
+        plot.title = element_text(hjust =0.5, size=12,face="plain"),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=9),
+        axis.title.y = element_blank(), 
+        axis.text.y=element_blank(), 
+        axis.ticks.y = element_blank(), 
+        axis.title.x=element_blank()) +
+  annotate("rect", xmin="September 2019",xmax = "August 2020",ymin =0, ymax = Inf,
+           alpha =0.1,fill = "blue") # Add blue rectangle representing sampling period 
+
+r_temp_plot= ggplot(rigaud_temperature, aes(Month_year, y=mean_daily_temperature)) + 
+  geom_boxplot(outlier.color=NA) +
+  labs(title="Rigaud") +
+  theme_classic() +
+  scale_y_continuous(limits=c(0,12), expand = c(0,0), n.breaks = 5) + # remove space between 0 and x axis
+  theme(text = element_text(size=12, face="plain"),
+        panel.grid.major.x = element_line(color = "gray", size = 0.2,linetype = 3), 
+        legend.justification = "center",
+        legend.position="bottom", 
+        plot.title = element_text(hjust =0.5, size=12, face="plain"),
+        axis.text.x = element_blank(), 
+        axis.ticks.x=element_blank(), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(), 
+        axis.text.y=element_blank(), 
+        axis.ticks.y = element_blank()) +
+  annotate("rect", xmin="September 2019",xmax = "August 2020",ymin =0, ymax = Inf,
+           alpha =0.1,fill = "blue") # Add blue rectangle representing sampling period 
+
+combined_plot=ggarrange(sl_temp_plot, r_temp_plot, sl_level_plot, r_level_plot, ncol=2, nrow=2, labels=c("a","b","c","d"),
+                        heights=c(0.8,1), widths=c(0.9,1), align="v") + 
+  annotate("text", x=0.521, y=0.012, label = "Month", size = 4)
+```
+
+```{r}
+ggsave("temperature_level.pdf",plot=combined_plot, device="pdf", path="/Users/karinevilleneuve/OneDrive - UQAM/DOCTORAT/Projects/Chapitre-1_Spatial/images/", width=16.5, height = 16.5, units = "cm")
+```
+
+# Generate table with daily average from our sampling period 
+```{r}
+mdl=subset(mean_daily_level, subset=Month_year %in% c("September 2019","October 2019","November 2019",
+                                                   "December 2019","January 2020","February 2020",
+                                                   "March 2020","April 2020","May 2020","June 2020",
+                                                    "July 2020","August 2020"))
+mdt=subset(mean_daily_temperature, subset=Month_year %in% c("September 2019","October 2019","November 2019",
+                                                   "December 2019","January 2020","February 2020",
+                                                   "March 2020","April 2020","May 2020","June 2020",
+                                                    "July 2020","August 2020"))
+```
+
+Save tables
+```{r}
+write.csv(mdt, "/Users/karinevilleneuve/OneDrive - UQAM/DOCTORAT/Projects/Chapitre-1_Spatial/Github/main_daily_temperature.csv", quote=FALSE, row.names = FALSE)
+write.csv(mdl, "/Users/karinevilleneuve/OneDrive - UQAM/DOCTORAT/Projects/Chapitre-1_Spatial/Github/main_daily_level.csv", quote=FALSE, row.names = FALSE)
+``` 
