@@ -1,0 +1,206 @@
+analysis_id,September to october ,Env,SourceSink,id
+sep-oct,SampleID,Env,SourceSink,id
+sep-oct,R-02-gw,Oct. groundwater,sink,2
+sep-oct,R-01-gw,Sep. groundwater,source,2
+sep-oct,R-01-S-00-bac,Sep. soil,source,2
+sep-oct,R-01-R,Sep. river,source,2
+sep-oct,SL-02-gw,Oct. groundwater,sink,1
+sep-oct,SL-01-gw,Sep. groundwater,source,1
+sep-oct,SL-01-S-00-bac,Sep. soil,source,1
+,,,,
+,October to november,,,
+oct-nov,SampleID,Env,SourceSink,id
+oct-nov,R-03-gw,Nov. groundwater,sink,2
+oct-nov,R-02-gw,Oct. groundwater,source,2
+oct-nov,R-01-gw,Sep. groundwater,source,2
+oct-nov,R-01-S-00-bac,Sep. soil,source,2
+oct-nov,R-02-S-00-bac,Oct. soil,source,2
+oct-nov,R-01-R,Sep. river,source,2
+oct-nov,R-02-R,Oct. river,source,2
+oct-nov,SL-03-gw,Nov. groundwater,sink,1
+oct-nov,SL-02-gw,Oct. groundwater,source,1
+oct-nov,SL-01-gw,Sep. groundwater,source,1
+oct-nov,SL-01-S-00-bac,Sep. soil,source,1
+oct-nov,SL-02-S-00-bac,Oct. soil,source,1
+,,,,
+,November to december,,,
+nov-dec,SampleID,Env,SourceSink,id
+nov-dec,R-04-gw,Dec. groundwater,sink,2
+nov-dec,R-03-gw,Nov. groundwater,source,2
+nov-dec,R-02-gw,Oct. groundwater,source,2
+nov-dec,R-01-gw,Sep. groundwater,source,2
+nov-dec,R-01-S-00-bac,Sep. soil,source,2
+nov-dec,R-02-S-00-bac,Oct. soil,source,2
+nov-dec,R-03-S-00-bac,Nov. soil,source,2
+nov-dec,R-03-sn,Nov. snow,source,2
+nov-dec,R-01-R,Sep. river,source,2
+nov-dec,R-02-R,Oct. river,source,2
+nov-dec,R-03-R,Nov. river,source,2
+nov-dec,SL-04-gw,Dec. groundwater,sink,1
+nov-dec,SL-03-gw,Nov. groundwater,source,1
+nov-dec,SL-02-gw,Oct. groundwater,source,1
+nov-dec,SL-01-gw,Sep. groundwater,source,1
+nov-dec,SL-01-S-00-bac,Sep. soil,source,1
+nov-dec,SL-02-S-00-bac,Oct. soil,source,1
+nov-dec,SL-03-S-00-bac,Nov. soil,source,1
+nov-dec,SL-03-sn,Nov. snow,source,1
+,,,,
+,December to January,,,
+dec-jan,SampleID,Env,SourceSink,id
+dec-jan,R-05-gw,Jan. groundwater,sink,2
+dec-jan,R-04-gw,Dec. groundwater,source,2
+dec-jan,R-03-gw,Nov. groundwater,source,2
+dec-jan,R-02-gw,Oct. groundwater,source,2
+dec-jan,R-02-S-00-bac,Oct. soil,source,2
+dec-jan,R-03-S-00-bac,Nov. soil,source,2
+dec-jan,R-04-S-00-bac,Dec. soil,source,2
+dec-jan,R-03-sn,Nov. snow,source,2
+dec-jan,R-02-R,Oct. river,source,2
+dec-jan,R-03-R,Nov. river,source,2
+dec-jan,R-04-R,Dec. river,source,2
+dec-jan,SL-05-gw,Jan. groundwater,sink,1
+dec-jan,SL-04-gw,Dec. groundwater,source,1
+dec-jan,SL-03-gw,Nov. groundwater,source,1
+dec-jan,SL-02-gw,Oct. groundwater,source,1
+dec-jan,SL-01-S-00-bac,Sep. soil,source,1
+dec-jan,SL-03-S-00-bac,Nov. soil,source,1
+dec-jan,SL-04-S-00-bac,Dec. soil,source,1
+dec-jan,SL-03-sn,Nov. snow,source,1
+,,,,
+,January to February,,,
+jan-feb,SampleID,Env,SourceSink,id
+jan-feb,R-06-gw,Feb. groundwater,sink,2
+jan-feb,R-05-gw,Jan. groundwater,source,2
+jan-feb,R-04-gw,Dec. groundwater,source,2
+jan-feb,R-03-gw,Nov. groundwater,source,2
+jan-feb,R-03-S-00-bac,Nov. soil,source,2
+jan-feb,R-04-S-00-bac,Dec. soil,source,2
+jan-feb,R-03-sn,Nov. snow,source,2
+jan-feb,R-05-sn,Jan. snow,source,2
+jan-feb,R-03-R,Nov. river,source,2
+jan-feb,R-04-R,Dec. river,source,2
+jan-feb,R-05-R,Jan. river,source,2
+jan-feb,SL-06-gw,Feb. groundwater,sink,1
+jan-feb,SL-05-gw,Jan. groundwater,source,1
+jan-feb,SL-04-gw,Dec. groundwater,source,1
+jan-feb,SL-03-gw,Nov. groundwater,source,1
+jan-feb,SL-03-S-00-bac,Nov. soil,source,1
+jan-feb,SL-04-S-00-bac,Dec. soil,source,1
+jan-feb,SL-03-sn,Nov. snow,source,1
+jan-feb,SL-05-sn,Jan. snow,source,1
+,,,,
+,February to march,,,
+feb-mar,SampleID,Env,SourceSink,id
+feb-mar,R-07-gw,Mar. groundwater,sink,2
+feb-mar,R-06-gw,Feb. groundwater,source,2
+feb-mar,R-05-gw,Jan. groundwater,source,2
+feb-mar,R-04-gw,Dec. groundwater,source,2
+feb-mar,R-04-S-00-bac,Dec. soil,source,2
+feb-mar,R-05-sn,Jan. snow,source,2
+feb-mar,R-06-sn,Feb. snow,source,2
+feb-mar,R-04-R,Dec. river,source,2
+feb-mar,R-05-R,Jan. river,source,2
+feb-mar,SL-07-gw,Mar. groundwater,sink,1
+feb-mar,SL-06-gw,Feb. groundwater,source,1
+feb-mar,SL-05-gw,Jan. groundwater,source,1
+feb-mar,SL-04-gw,Dec. groundwater,source,1
+feb-mar,SL-04-S-00-bac,Dec. soil,source,1
+feb-mar,SL-05-sn,Jan. snow,source,1
+feb-mar,SL-06-sn,Feb. snow,source,1
+,,,,
+,March to april ,,,
+mar-apr,SampleID,Env,SourceSink,id
+mar-apr,R-08-gw,Apr. groundwater,sink,2
+mar-apr,R-07-gw,Mar. groundwater,source,2
+mar-apr,R-06-gw,Feb. groundwater,source,2
+mar-apr,R-05-gw,Jan. groundwater,source,2
+mar-apr,R-05-sn,Jan. snow,source,2
+mar-apr,R-06-sn,Feb. snow,source,2
+mar-apr,R-07-sn,Mar. snow,source,2
+mar-apr,R-05-R,Jan. river,source,2
+mar-apr,SL-08-gw,Apr. groundwater,sink,1
+mar-apr,SL-07-gw,Mar. groundwater,source,1
+mar-apr,SL-06-gw,Feb. groundwater,source,1
+mar-apr,SL-05-gw,Jan. groundwater,source,1
+mar-apr,SL-05-sn,Jan. snow,source,1
+mar-apr,SL-06-sn,Feb. snow,source,1
+mar-apr,SL-07-sn,Mar. snow,source,1
+,,,,
+,,,,
+,April to may,,,
+apr-may,SampleID,Env,SourceSink,id
+apr-may,R-09-gw,May groundwater,sink,2
+apr-may,R-08-gw,Apr. groundwater,source,2
+apr-may,R-07-gw,Mar. groundwater,source,2
+apr-may,R-06-gw,Feb. groundwater,source,2
+apr-may,R-06-sn,Feb. snow,source,2
+apr-may,R-07-sn,Mar. snow,source,2
+apr-may,R-08-S-00-bac,Apr. soil,source,2
+apr-may,R-08-R,Apr. river,source,2
+apr-may,SL-09-gw,May groundwater,sink,1
+apr-may,SL-08-gw,Apr. groundwater,source,1
+apr-may,SL-07-gw,Mar. groundwater,source,1
+apr-may,SL-06-gw,Feb. groundwater,source,1
+apr-may,SL-06-sn,Feb. snow,source,1
+apr-may,SL-07-sn,Mar. snow,source,1
+apr-may,SL-08-S-00-bac,Apr. soil,source,1
+,,,,
+,,,,
+,May to june,,,
+may-june,SampleID,Env,SourceSink,id
+may-june,R-10-gw,June groundwater,sink,2
+may-june,R-09-gw,May groundwater,source,2
+may-june,R-08-gw,Apr. groundwater,source,2
+may-june,R-07-gw,Mar. groundwater,source,2
+may-june,R-08-S-00-bac,Apr. soil,source,2
+may-june,R-09-S-00-bac,May soil,source,2
+may-june,R-07-sn,Mar. snow,source,2
+may-june,R-08-R,Apr. river,source,2
+may-june,R-09-R,May river,source,2
+may-june,SL-10-gw,June groundwater,sink,1
+may-june,SL-09-gw,May groundwater,source,1
+may-june,SL-08-gw,Apr. groundwater,source,1
+may-june,SL-07-gw,Mar. groundwater,source,1
+may-june,SL-08-S-00-bac,Apr. soil,source,1
+may-june,SL-09-S-00-bac,May soil,source,1
+may-june,SL-07-sn,Mar. snow,source,1
+,,,,
+,June to July,,,
+june-july,SampleID,Env,SourceSink,id
+june-july,R-11-gw,July groundwater,sink,2
+june-july,R-10-gw,June groundwater,source,2
+june-july,R-09-gw,May groundwater,source,2
+june-july,R-08-gw,Apr. groundwater,source,2
+june-july,R-08-S-00-bac,Apr. soil,source,2
+june-july,R-09-S-00-bac,May soil,source,2
+june-july,R-10-S-00-bac,June soil,source,2
+june-july,R-08-R,Apr. river,source,2
+june-july,R-09-R,May river,source,2
+june-july,R-10-R,June river,source,2
+june-july,SL-11-gw,July groundwater,sink,1
+june-july,SL-10-gw,June groundwater,source,1
+june-july,SL-09-gw,May groundwater,source,1
+june-july,SL-08-gw,Apr. groundwater,source,1
+june-july,SL-08-S-00-bac,Apr. soil,source,1
+june-july,SL-09-S-00-bac,May soil,source,1
+june-july,SL-10-S-00-bac,June soil,source,1
+,,,,
+,July to august ,,,
+july-aug,SampleID,Env,SourceSink,id
+july-aug,R-12-gw,Aug. groundwater,sink,2
+july-aug,R-11-gw,July groundwater,source,2
+july-aug,R-10-gw,June groundwater,source,2
+july-aug,R-09-gw,May groundwater,source,2
+july-aug,R-09-S-00-bac,May soil,source,2
+july-aug,R-10-S-00-bac,June soil,source,2
+july-aug,R-11-S-00-bac,July soil,source,2
+july-aug,R-09-R,May river,source,2
+july-aug,R-10-R,June river,source,2
+july-aug,R-11-R,July river,source,2
+july-aug,SL-12-gw,Aug. groundwater,sink,1
+july-aug,SL-11-gw,July groundwater,source,1
+july-aug,SL-10-gw,June groundwater,source,1
+july-aug,SL-09-gw,May groundwater,source,1
+july-aug,SL-09-S-00-bac,May soil,source,1
+july-aug,SL-10-S-00-bac,June soil,source,1
+july-aug,SL-11-S-00-bac,July soil,source,1
