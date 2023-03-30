@@ -1,0 +1,3 @@
+"R-01-R_Sep. river"	"R-01-gw_Sep. groundwater"	"SL-01-R_Sep. river"	"SL-01-gw_Sep. groundwater"	"SL-01-dF_Sep. discharge-forest"	"SL-01-dR2_Sep. discharge-river-B"	"Unknown"
+"R-02-R_Oct. river"	0.163733875630775	0.153440921237918	NA	NA	NA	NA	0.682825203131307
+"SL-02-R_Oct. river"	NA	NA	0.0662384822362729	0.0231946166042593	0.00710336481755884	0.108509670493256	0.794953865848653

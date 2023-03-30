@@ -1,0 +1,3 @@
+"R-11-R_July. river"	"R-10-R_June. river"	"R-09-R_May. river"	"R-11-gw_July. groundwater"	"R-10-gw_June. groundwater"	"R-09-gw_May. groundwater"	"SL-11-R_July. river"	"SL-10-R_June. river"	"SL-09-R_May. river"	"SL-11-gw_July. groundwater"	"SL-10-gw_June. groundwater"	"SL-09-gw_May. groundwater"	"Unknown"
+"R-12-R_Aug. river"	0.643378565056497	0.000864815884365465	0.0016285183574475	6.11368571778004e-56	6.80242894256665e-30	1.25700644935319e-10	NA	NA	NA	NA	NA	NA	0.354128100575989
+"SL-12-R_Aug. river"	NA	NA	NA	NA	NA	NA	0.196138697838558	0.165950112828643	9.81705475317608e-05	2.21448463537392e-49	2.66001971555779e-94	0.00949547499605919	0.628317543789208

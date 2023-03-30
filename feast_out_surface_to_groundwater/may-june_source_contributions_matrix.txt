@@ -1,0 +1,3 @@
+"R-09-gw_May groundwater"	"R-08-gw_Apr. groundwater"	"R-07-gw_Mar. groundwater"	"R-08-S-00-bac_Apr. soil"	"R-09-S-00-bac_May soil"	"R-07-sn_Mar. snow"	"R-08-R_Apr. river"	"R-09-R_May river"	"SL-09-gw_May groundwater"	"SL-08-gw_Apr. groundwater"	"SL-07-gw_Mar. groundwater"	"SL-08-S-00-bac_Apr. soil"	"SL-09-S-00-bac_May soil"	"SL-07-sn_Mar. snow"	"Unknown"
+"R-10-gw_June groundwater"	0.0124884121361114	0.0134501505292469	2.20962012629834e-16	0	0	0.0328746092173482	5.49247188202575e-27	1.53295408932341e-17	NA	NA	NA	NA	NA	NA	0.941186828117293
+"SL-10-gw_June groundwater"	NA	NA	NA	NA	NA	NA	NA	NA	0.590587649724689	0.027695694341339	0.01548216653297	0.00936366719158845	0.0161694974756247	1.53882018394464e-26	0.340701324733789

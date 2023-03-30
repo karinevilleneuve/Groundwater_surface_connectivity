@@ -1,0 +1,3 @@
+"R-02-gw_Oct. groundwater"	"R-01-gw_Sep. groundwater"	"R-01-S-00-bac_Sep. soil"	"R-02-S-00-bac_Oct. soil"	"R-01-R_Sep. river"	"R-02-R_Oct. river"	"SL-02-gw_Oct. groundwater"	"SL-01-gw_Sep. groundwater"	"SL-01-S-00-bac_Sep. soil"	"SL-02-S-00-bac_Oct. soil"	"Unknown"
+"R-03-gw_Nov. groundwater"	0.237566752190843	0.0403442390359274	0.000699056313600653	0.00193574626010947	0.000868502149049832	0.00555582275084206	NA	NA	NA	NA	0.713029881299628
+"SL-03-gw_Nov. groundwater"	NA	NA	NA	NA	NA	NA	0.102152933849994	0.582834764316881	0.0218029919636427	0.000799601775915413	0.292409708093567
