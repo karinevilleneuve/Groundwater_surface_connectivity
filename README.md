@@ -1,10 +1,8 @@
-# Groundwater_surface_connectivity
-
 Effect of snowmelt on groundwater bacterial community com-position and potential role of surface environments as microbial seed bank in two distinct aquifers from the region of Quebec, Canada
 
 Article by Karine Villeneuve^1, Valérie Turcotte-Blais^1, and Cassandre Sara Lazar^1*
 
-^1	Department of Biological Sciences, University of Québec at Montréal, Canada
+$$^1$$	Department of Biological Sciences, University of Québec at Montréal, Canada
 *	Correspondance: Cassandre Sara Lazar, lazar.cassandre@uqam.ca, UQAM, C.P. 8888, Succ. Centre-Ville, Montréal, QC H3C 3P8, Canada
  
 *Abstract* : 
