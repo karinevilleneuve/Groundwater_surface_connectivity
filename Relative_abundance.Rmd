@@ -1,0 +1,315 @@
+---
+title: "Basic_analyses"
+output: html_document
+date: '2022-10-18'
+---
+
+```{r}
+library(dplyr)
+library(phyloseq)
+library(randomcoloR)
+library(ggplot2)
+
+asv=read.table("/Rarefied_meta_asv_taxa_tree/rarefied_asv.csv", sep=",", row.names=1, header=TRUE, check.names=FALSE) 
+taxa=read.table("/Rarefied_meta_asv_taxa_tree/rarefied_taxa.csv", sep=",", row.names=1, header=TRUE) 
+meta=read.table("/Rarefied_meta_asv_taxa_tree/rarefied_meta.csv", sep=",", row.names=1, header=TRUE) 
+meta=subset(meta, select =c(City, Month, Sample_type))
+# Merge into phyloseq object 
+ps=phyloseq(otu_table(asv, taxa_are_rows=TRUE), tax_table(as.matrix(taxa)), sample_data(meta))
+
+# Select taxonomic rank
+taxa_rank="Family"
+
+ps_rel_abund=transform_sample_counts(ps, function(x) x/sum(x)) # get abundance in %
+glom=tax_glom(ps_rel_abund, taxrank = taxa_rank) # agglomerate taxa at the desired taxonomic level
+``` 
+
+Concatenate the `City`, `Month` and `Sample_type` variables in a new column (city_month)
+This will allow me to loop over this new variable in order to get a more accurate relative abundance of the taxa
+```{r}
+df=psmelt(glom) 
+df$city_month_sample_type=paste(df$City, "_", df$Month, "_", df$Sample_type)
+``` 
+
+```{r} 
+list_of_all_taxonomic_rank= list() # Create empty list 
+i = 0
+
+# Loop over every month and city to combine taxa that are not the top
+for (month in unique(df$city_month_sample_type)){
+    i=i+1 
+    sample=subset(df, city_month_sample_type==month)
+    total_abundance=aggregate(sample$Abundance, by=list(taxa_rank=sample[[taxa_rank]]), FUN=sum)
+    top=head(total_abundance[order(total_abundance$x, decreasing= T),], n = 5)
+    others_df=sample[!sample[[taxa_rank]] %in% top$taxa_rank,] # identify other 
+    others_list=pull(others_df, taxa_rank)
+    sample[sample[[taxa_rank]]%in% others_list,][[taxa_rank]]="Others"
+    list_of_all_taxonomic_rank[[i]]=sample
+}
+
+df2=do.call("rbind",list_of_all_taxonomic_rank) # combine all generated list into one dataframe  
+
+unique_taxon=data.frame(unique(df2[[taxa_rank]]))
+name=colnames(unique_taxon)
+names(unique_taxon)[names(unique_taxon)==name]=as.character(taxa_rank) # Rename column 
+```
+
+SET COLORS
+```{r}
+# To create a new color range
+# n=nrow(unique_taxon)
+# palette=distinctColorPalette(n)
+# # Tweeking some colors
+# 
+# unique_taxon[[taxa_rank]]=factor(unique_taxon[[taxa_rank]])
+# names(palette)=levels(unique_taxon[[taxa_rank]])
+# palette[["Others"]]="#E1E1E1"
+# palette[["Unclassified_Diplorickettsiaceae"]]="#a5afa4"
+# palette[["Coxiella"]]="darkcyan"
+# palette[["Sulfurifustis"]]="#b72c61"
+# palette[["Methylobacterium-Methylorubrum"]]="#8897f5"
+# palette[["Unclassified_Gemmatimonadaceae"]]="#E4954E"
+# my_scale=scale_fill_manual(name=as.character(taxa_rank), values = palette, na.translate=FALSE, drop=TRUE, limits = force)
+
+# Saving the color palette for future use 
+#saveRDS(palette,"~/16S_Project/chap_1_feast/combined/family_top_15_all_samples.rds")
+palette=readRDS("~/16S_Project/chap_1_feast/combined/color_family_top_15_all_samples.rds") # Load color palette
+# Add color for missing data 
+palette["Missing data"]="#F8F8F8"
+my_scale <- scale_fill_manual(name=as.character(taxa_rank), values = palette, na.translate=FALSE, drop=TRUE, limits = force) # Recreate color fill 
+```
+
+# Prepare dataframes 
+```{r} 
+library(tidyverse)
+#Convert month to factor and order chronologically
+df2$Month=factor(df2$Month,levels = c("Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "June", "July","Aug")) 
+rig=subset(df2, City=="R")
+sl=subset(df2, City=="SL")
+```
+Loop for plotting results 
+```{r} 
+# Rigaud 
+rplot_list = list()
+i = 0
+list_harcoded = c(5,12,5,5)
+for (habitat in unique(rig$Sample_type)){
+  i = i + 1
+  df_sample=subset(rig, Sample_type==habitat)
+  p=ggplot(df_sample, aes(x=Month, weight=Abundance, fill=fct_reorder(Family,Abundance,.desc=FALSE))) + # .data is very important to force the evaluation of the input variables (taxonomic_rank)
+  geom_bar() + 
+  labs(y ='Relative abundance (%)') +
+  scale_y_continuous(expand = c(0,0)) +
+  theme_classic() +
+  theme(text = element_text(size = 12),
+        legend.position="bottom", 
+        plot.title = element_text(hjust =0.5),
+        legend.text=element_text(size=8),
+        legend.title=element_text(size=9)) +
+  ggtitle(paste("Rigaud -", habitat)) + 
+  my_scale + 
+  guides(fill=guide_legend(nrow=list_harcoded[i], title="Family", title.position="left", title.hjust = 0.5, reverse=FALSE))
+  rplot_list[[i]] = p
+}
+# Saint-Lazare
+slplot_list = list()
+i = 0
+list_harcoded = c(9,5,5,6,5,5,6)
+for (habitat in unique(sl$Sample_type)){
+  i = i + 1
+  df_sample=subset(sl, Sample_type==habitat)
+  p=ggplot(df_sample, aes(x=Month, weight=Abundance, fill=fct_reorder(Family,Abundance,.desc=FALSE))) + # .data is very important to force the evaluation of the input variables (taxonomic_rank)
+  geom_bar() + 
+  labs(y ='Relative abundance (%)') +
+  scale_y_continuous(expand = c(0,0)) +
+  theme_classic() +
+  theme(text = element_text(size = 12),
+        legend.position="bottom", 
+        plot.title = element_text(hjust =0.5),
+        legend.text=element_text(size=8),
+        legend.title=element_text(size=9))+
+  ggtitle(paste("Saint-Lazare -", habitat)) + 
+  my_scale + 
+  guides(fill=guide_legend(nrow=list_harcoded[i], title="Family", title.position="left", title.hjust = 0.5, reverse=FALSE)) 
+  slplot_list[[i]] = p
+}
+slplot_list
+```
+
+# Save plots 
+```{r}
+# devtools::install_github("andyofsmeg/ggTag")
+library(ggTag) # To extract title from plots
+
+# Set path for saving plots 
+plot_path="/image"
+
+for (i in rplot_list[]){
+  title=extractGGTitle(i) # extract title from plot 
+  titlepdf=paste(title, "-family.pdf", sep="") # add.pdf to the end of every title to save figure as pdf
+  ggsave(as.character(titlepdf),plot=i, device="pdf", path=plot_path, width=16.5, height = 16.5, units="cm") # save plot 
+} 
+
+for (i in slplot_list[]){
+  title=extractGGTitle(i) # extract title from plot 
+  titlepdf=paste(title, "-family.pdf", sep="") # add.pdf to the end of every title to save figure as pdf
+  ggsave(as.character(titlepdf),plot=i, device="pdf", path=plot_path, width=16.5, height = 16.5, units="cm") # save plot 
+} 
+``` 
+# Export tables 
+```{r}
+rig$Genus_month=paste(rig$Family,":",rig$city_month_sample_type) # Create new column for Genus_month to aggregate 
+sl$Genus_month=paste(sl$Family,":",sl$city_month_sample_type)
+
+rig_df=aggregate(x=rig$Abundance, by=list(rig$Genus_month), FUN=sum)
+sl_df=aggregate(x=sl$Abundance, by=list(sl$Genus_month), FUN=sum)
+
+# Save tables
+write.csv(rig_df, "family_abundance_rig.csv", quote=FALSE, row.names=FALSE)
+write.csv(sl_df, "family_abundance_saintlaz.csv", quote=FALSE, row.names=FALSE)
+```
+
+Creating plots combinning groundwater and snow 
+
+# -----------Rigaud------------
+```{r}
+library(ggpubr)
+# Function to extract legend
+get_legend=function(myggplot){
+  tmp=ggplot_gtable(ggplot_build(myggplot))
+  leg=which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend=tmp$grobs[[leg]]
+  return(legend)
+}
+rig_df=subset(rig, Sample_type=="Groundwater"|Sample_type=="Snow")
+rig_df[nrow(rig_df)+1,]=list(0,"Missing data",0,"Missing data","Aug","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data") # Adding row with missing data for the legend 
+
+# We facet grid to get a combined legend that we then extract 
+rplot_legend=ggplot(rig_df, aes(x=Month, weight=Abundance, fill=fct_reorder(Family,Abundance,.desc=FALSE))) + # .data is very important to force the evaluation of the input variables (taxonomic_rank)
+  geom_bar() + facet_grid(cols = vars(Sample_type)) +
+  theme(legend.text=element_text(size=8), legend.title=element_text(size=9)) +
+  my_scale + guides(fill=guide_legend(nrow=13, title="Family", title.position="top", title.hjust = 0.5, reverse=FALSE)) 
+# Extract legend 
+rig_legend=as_ggplot(get_legend(rplot_legend))
+
+rig_gw=subset(rig_df, Sample_type=="Groundwater")
+r_gw_plot=ggplot(rig_gw, aes(x=fct_rev(Month), weight=Abundance, fill=fct_reorder(Family,Abundance,.desc=FALSE))) + # .data is very important to force the evaluation of the input variables (taxonomic_rank)
+  geom_bar() + 
+  labs(y ='Relative abundance (%)') +
+  scale_y_continuous(expand = c(0,0),breaks=c(0, 0.25, 0.50, 0.75, 1),labels=c("0","0.25","0.50","0.75","1")) +
+  theme_classic() +
+  labs(x="Month", y="") +
+  theme(text = element_text(size = 10),
+        legend.position="none", 
+        plot.title = element_text(hjust =0.5)) +
+  ggtitle(paste("Groundwater")) + 
+  coord_flip() +
+  my_scale + 
+  guides(fill=guide_legend(nrow=list_harcoded[i], title="Family", title.position="left", title.hjust = 0.5, reverse=FALSE))
+
+rig_snow=subset(rig_df, Sample_type=="Snow")
+# Add empty month for snow 
+rig_snow[nrow(rig_snow)+1,]=list(0,"Missing data",1,"Missing data","Sep","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+rig_snow[nrow(rig_snow)+1,]=list(0,"Missing data",1,"Missing data","Oct","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+rig_snow[nrow(rig_snow)+1,]=list(0,"Missing data",1,"Missing data","Dec","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+rig_snow[nrow(rig_snow)+1,]=list(0,"Missing data",1,"Missing data","Apr","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+rig_snow[nrow(rig_snow)+1,]=list(0,"Missing data",1,"Missing data","May","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+rig_snow[nrow(rig_snow)+1,]=list(0,"Missing data",1,"Missing data","June","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+rig_snow[nrow(rig_snow)+1,]=list(0,"Missing data",1,"Missing data","July","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+rig_snow[nrow(rig_snow)+1,]=list(0,"Missing data",1,"Missing data","Aug","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+
+r_snow_plot=ggplot(rig_snow, aes(x=fct_rev(Month), weight=Abundance, fill=fct_reorder(Family,Abundance,.desc=FALSE))) + # .data is very important to force the evaluation of the input variables (taxonomic_rank)
+  geom_bar() +
+  labs(y ='Relative abundance (%)') +
+  scale_y_continuous(expand = c(0,0),breaks=c(0, 0.25, 0.50, 0.75, 1),labels=c("0","0.25","0.50","0.75","1")) +
+  theme_classic() +
+  labs(x="", y="") +
+  theme(text = element_text(size = 10),
+        legend.position="none", 
+        plot.title = element_text(hjust =0.5),
+        axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank()) +
+  ggtitle(paste("Snow")) + 
+  coord_flip() +
+  my_scale + 
+  guides(fill=guide_legend(nrow=list_harcoded[i], title="Family", title.position="left", title.hjust = 0.5, reverse=FALSE)) 
+
+
+combined_plot_rig=ggarrange(ggarrange(r_gw_plot, r_snow_plot, ncol=2, labels=c("a","b"), legend="none", widths=c(1,0.985)), rig_legend, nrow=2, heights=c(0.9,1)) + 
+  annotate("text", x=0.5, y=0.54, label = "Relative abundance (%)", size = 3)
+
+# Save plots 
+ggsave("Family_Groundwater_Snow_Rigaud.pdf",plot=combined_plot_rig, device="pdf", path="~/16S_Project/chap_1_feast/combined/image/", width=16.5, height = 16.5, units = "cm")
+```
+
+# -----------Saint-Lazare------------
+```{r}
+library(ggpubr)
+# Function to extract legend
+get_legend=function(myggplot){
+  tmp=ggplot_gtable(ggplot_build(myggplot))
+  leg=which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend=tmp$grobs[[leg]]
+  return(legend)
+}
+
+sl_df=subset(sl, Sample_type=="Groundwater"|Sample_type=="Snow")
+sl_df[nrow(sl_df)+1,]=list(0,"Missing data",0,"Missing data","Aug","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data") # Adding row with missing data for the legend 
+
+# We facet grid to get a combined legend that we then extract 
+slplot_legend=ggplot(sl_df, aes(x=Month, weight=Abundance, fill=fct_reorder(Family,Abundance,.desc=FALSE))) + # .data is very important to force the evaluation of the input variables (taxonomic_rank)
+  geom_bar() + facet_grid(cols = vars(Sample_type)) +
+  theme(legend.text=element_text(size=8), legend.title=element_text(size=9)) +
+  my_scale + guides(fill=guide_legend(nrow=10, title="Family", title.position="top", title.hjust = 0.5, reverse=FALSE)) 
+# Extract legend 
+sl_legend=as_ggplot(get_legend(slplot_legend))
+
+sl_gw=subset(sl_df, Sample_type=="Groundwater")
+sl_gw_plot=ggplot(sl_gw, aes(x=fct_rev(Month), weight=Abundance, fill=fct_reorder(Family,Abundance,.desc=FALSE))) + # .data is very important to force the evaluation of the input variables (taxonomic_rank)
+  geom_bar() + 
+  labs(y ='Relative abundance (%)') +
+  scale_y_continuous(expand = c(0,0),breaks=c(0, 0.25, 0.50, 0.75, 1),labels=c("0","0.25","0.50","0.75","1")) +
+  theme_classic() +
+  labs(x="Month", y="") +
+  theme(text = element_text(size = 10),
+        legend.position="none", 
+        plot.title = element_text(hjust =0.5)) +
+  ggtitle(paste("Groundwater")) + 
+  coord_flip() +
+  my_scale + 
+  guides(fill=guide_legend(nrow=list_harcoded[i], title="Family", title.position="left", title.hjust = 0.5, reverse=FALSE))
+
+sl_snow=subset(sl_df, Sample_type=="Snow")
+# Add empty month for snow 
+sl_snow[nrow(sl_snow)+1,]=list(0,"Missing data",1,"Missing data","Sep","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+sl_snow[nrow(sl_snow)+1,]=list(0,"Missing data",1,"Missing data","Oct","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+sl_snow[nrow(sl_snow)+1,]=list(0,"Missing data",1,"Missing data","Dec","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+sl_snow[nrow(sl_snow)+1,]=list(0,"Missing data",1,"Missing data","Apr","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+sl_snow[nrow(sl_snow)+1,]=list(0,"Missing data",1,"Missing data","May","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+sl_snow[nrow(sl_snow)+1,]=list(0,"Missing data",1,"Missing data","June","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+sl_snow[nrow(sl_snow)+1,]=list(0,"Missing data",1,"Missing data","July","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+sl_snow[nrow(sl_snow)+1,]=list(0,"Missing data",1,"Missing data","Aug","Missing data","Missing data", "Missing data", "Missing data", "Missing data", "Missing data","'Missing data")
+
+sl_snow_plot=ggplot(sl_snow, aes(x=fct_rev(Month), weight=Abundance, fill=fct_reorder(Family,Abundance,.desc=FALSE))) + # .data is very important to force the evaluation of the input variables (taxonomic_rank)
+  geom_bar() +
+  labs(y ='Relative abundance (%)') +
+  scale_y_continuous(expand = c(0,0),breaks=c(0, 0.25, 0.50, 0.75, 1),labels=c("0","0.25","0.50","0.75","1")) +
+  theme_classic() +
+  labs(x="", y="") +
+  theme(text = element_text(size = 10),
+        legend.position="none", 
+        plot.title = element_text(hjust =0.5),
+        axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank()) +
+  ggtitle(paste("Snow")) + 
+  coord_flip() +
+  my_scale + 
+  guides(fill=guide_legend(nrow=list_harcoded[i], title="Family", title.position="left", title.hjust = 0.5, reverse=FALSE)) 
+
+combined_plot_sl=ggarrange(ggarrange(sl_gw_plot, sl_snow_plot, ncol=2, labels=c("a","b"), legend="none", widths=c(1,0.985)), sl_legend, nrow=2, heights=c(1,1)) + 
+  annotate("text", x=0.5, y=0.5, label = "Relative abundance (%)", size = 3)
+
+# Save plots 
+ggsave("Family_Groundwater_Snow_StLaz.pdf",plot=combined_plot_sl, device="pdf", path="~/16S_Project/chap_1_feast/combined/image/", width=16.5, height = 16.5, units = "cm")
+```
+
