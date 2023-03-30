@@ -1,0 +1,190 @@
+---
+title: "PCoA"
+output: html_document
+date: "2022-11-11"
+---
+Load package and set-up directory 
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "/Rarefied_meta_asv_taxa_tree")
+library(phyloseq)
+library(vegan)
+library(ggplot2)
+library(ggpubr)
+library(ggrepel)
+library(glue)
+library(cluster)
+library(dplyr)
+library(scales)
+``` 
+# Load data 
+```{r}
+asv=read.table("rarefied_asv.csv", sep=",", row.names=1, header=TRUE, check.names=FALSE) 
+taxa=read.table("rarefied_taxa.csv", sep=",", row.names=1, header=TRUE) 
+meta=read.table("rarefied_meta.csv", sep=",", row.names=1, header=TRUE) 
+#tree=raw_tree <- ape::read.tree("raw_tree.tree")
+
+# Hellinger transform count data to account for the arch effect regularly observed in ecological count data. 
+asv_hellinger=decostand(asv, method="hellinger")
+meta$Month=factor(meta$Month,levels = c("Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "June", "July","Aug")) 
+meta$Sample_type=factor(meta$Sample_type, levels = c("Soil", "River", "Groundwater", "Snow"))
+
+# Add column for season and period 
+meta2=meta %>% 
+  mutate(Season = case_when(
+    # Season
+    Month=="Sep"|Month=="Oct"|Month=="Nov"~"Fall",
+    Month=="Dec"|Month=="Jan"|Month=="Feb"~"Winter",
+    Month=="Mar"|Month=="Apr"|Month=="May"~"Spring",
+    Month=="June"|Month=="July"|Month=="Aug"~"Summer")) %>%
+    # Period
+      mutate(Period=case_when(
+        Month=="Sep"|Month=="Oct"|Month=="Nov"|Month=="Dec"|Month=="Jan"|Month=="Feb"~"Pre-recharge",
+        Month=="Mar"|Month=="Apr"|Month=="May"|Month=="June"|Month=="July"|Month=="Aug"~"Post-recharge"
+  ))
+
+# Merge into phyloseq object 
+ps=phyloseq(otu_table(asv_hellinger, taxa_are_rows=TRUE), tax_table(as.matrix(taxa)), sample_data(meta2))
+```
+
+# PCoA 
+Ordination of all habitat (sample_type) for both cities 
+```{r} 
+sort(meta$City)
+ord_model=list()
+percent_list=list()
+i = 0
+  
+for (city_name in unique(meta$City)){
+  i = i + 1
+  ps_city=subset_samples(ps, City==city_name)
+  clean_ps=prune_taxa(taxa_sums(ps_city) > 0, ps_city) # keep only taxa that have a total sum > 0 
+  #dist=uni_dist=UniFrac(clean_ps) # with unifrac distances 
+  df=data.frame(t(otu_table(clean_ps)))
+  dist=vegdist(df, method="bray")
+  PCOA <- cmdscale(dist, eig=TRUE, add=TRUE) # set eig to TRUE to get % of variance for each axis and correct negative eig values with add=TRUE
+  position=PCOA$points # Extract point position 
+  colnames(position)=c("Axis.1", "Axis.2") # Change column name 
+  ord_model[[i]]=position # Save into empty list 
+  percent_explained=100*PCOA$eig/sum(PCOA$eig) # get percentage of variation explained by each axis 
+  reduced_percent=format(round(percent_explained[1:2], digits=2), nsmall=1, trim=TRUE) # reduce number of digits
+  percent_list[[i]]=reduced_percent
+}
+``` 
+
+## Plotting PCoA resutls 
+
+Generate plot for all samples 
+```{r}
+# Extract results from PCoA 
+r_pcoa=ord_model[[1]] # extract coordinates results from list
+expl_labs=percent_list[[1]] # extract the percentage of variation explained from list 
+pretty_labs=c(glue("Axis 1 ({expl_labs[1]}%)"), glue("Axis 2 ({expl_labs[2]}%)")) # modify the percentage (only 2 digits after comma and show at least one digit)
+rdf=merge(r_pcoa, meta2, by=0) # combine PCOA results with metadata 
+# Repeat with second city 
+sl_pcoa=ord_model[[2]]
+sl_expl_labs=percent_list[[2]]
+sl_pretty_labs=c(glue("Axis 1 ({sl_expl_labs[1]}%)"), glue("Axis 2 ({sl_expl_labs[2]}%)"))
+sldf=merge(sl_pcoa, meta2, by=0) # combine PCOA results with metadata 
+
+# Generate plots 
+r_plot=ggplot(rdf, aes(x=Axis.1, y=Axis.2, color=Sample_type)) + 
+  theme_light() +
+  geom_point(size=2) + 
+  #geom_text_repel(data=subset(rdf, Sample_type=="Groundwater"), aes(label=Month), family="Palatino", size = 5, max.overlaps = Inf) + 
+  labs(x=pretty_labs[1], y=pretty_labs[2], color="Habitat", title="Rigaud") + 
+  theme(text = element_text(size=12), 
+        plot.title=element_text(hjust=0.5)) + 
+  scale_y_continuous(limits=c(-0.50,0.50)) +
+  scale_x_continuous(limits=c(-0.5,0.5)) + 
+  scale_color_manual(values = c("#B86500", "darkcyan", "#72B3DA", "#000000")) 
+
+
+sl_plot=ggplot(sldf, aes(x=Axis.1, y=Axis.2, color=Sample_type)) + 
+  geom_point(size=2) + 
+  theme_light() + 
+  #geom_text_repel(data=subset(sldf, Sample_type=="Groundwater"), aes(label=Month), family="Palatino", size = 5, max.overlaps = Inf) + 
+  labs(x=sl_pretty_labs[1], y=sl_pretty_labs[2], color="Habitat", title="Saint-Lazare") + 
+  theme(text = element_text( size=12), 
+        plot.title=element_text(hjust=0.5)) + 
+  scale_y_continuous(labels = label_number(accuracy = 0.01),limits=c(-0.50,0.50)) +
+  scale_x_continuous(limits=c(-0.5,0.5)) + 
+  scale_color_manual(values = c("#B86500", "darkcyan", "#72B3DA", "#000000")) 
+```
+
+Combine plots and save as PDF
+```{r}
+comb_ord=ggarrange(sl_plot, r_plot, ncol=2, labels=c("a","b"), common.legend = TRUE, legend="bottom")
+
+ggsave("pcoa_habitat.pdf", plot=comb_ord, width=16.5, height=10,units="cm", path="/image/")
+```
+
+# New ordination with only groundwater 
+
+```{r}
+gw_ps=subset_samples(ps, Sample_type=="Groundwater")
+gw_ord_model=list()
+gw_percent_list=list()
+i = 0
+  
+for (city_name in unique(meta2$City)){
+  i = i + 1
+  gw_ps_city=subset_samples(gw_ps, City==city_name)
+  gw_clean_ps=prune_taxa(taxa_sums(gw_ps_city) > 0, gw_ps_city) # keep only taxa that have a total sum > 0 
+  gw_df=data.frame(t(otu_table(gw_clean_ps)))
+  gw_dist=vegdist(gw_df, method="bray")
+  gw_PCOA <- cmdscale(gw_dist, eig=TRUE, add=TRUE) # set eig to TRUE to get % of variance for each axis and correct negative eig values with add=TRUE
+  gw_position=gw_PCOA$points # Extract point position 
+  colnames(gw_position)=c("Axis.1", "Axis.2") # Change column name 
+  gw_ord_model[[i]]=gw_position # Save into empty list 
+  gw_percent_explained=100*gw_PCOA$eig/sum(gw_PCOA$eig) # get percentage of variation explained by each axis 
+  gw_reduced_percent=format(round(gw_percent_explained[1:2], digits=2), nsmall=1, trim=TRUE) # reduce number of digits
+  gw_percent_list[[i]]=gw_reduced_percent
+}
+```
+
+Generate plots 
+```{r}
+# Extract results from PCoA 
+gw_r_pcoa=gw_ord_model[[1]] # extract coordinates results from list
+gw_expl_labs=gw_percent_list[[1]] # extract the percentage of variation explained from list 
+gw_r_pretty_labs=c(glue("Axis 1 ({gw_expl_labs[1]}%)"), glue("Axis 2 ({gw_expl_labs[2]}%)")) # modify the percentage (only 2 digits after comma and show at least one digit)
+gw_rdf=merge(gw_r_pcoa, meta2, by=0) # combine PCOA results with metadata 
+
+# Repeat with second city 
+gw_sl_pcoa=gw_ord_model[[2]]
+gw_sl_expl_labs=gw_percent_list[[2]]
+gw_sl_pretty_labs=c(glue("Axis 1 ({gw_sl_expl_labs[1]}%)"), glue("Axis 2 ({gw_sl_expl_labs[2]}%)"))
+gw_sldf=merge(gw_sl_pcoa, meta2, by=0) # combine PCOA results with metadata 
+```
+# Generate plots 
+```{r}
+gw_r_plot=ggplot(gw_rdf, aes(x=Axis.1, y=Axis.2, color=Period, label=Month)) + 
+  theme_light() +
+  theme(text = element_text( size=12), 
+        plot.title=element_text(hjust=0.5)) + 
+  geom_point(size=2) + 
+  geom_text_repel(aes(label=Month),size = 4, show.legend = FALSE, 
+                  max.overlaps=20) +
+  labs(x=gw_r_pretty_labs[1], y=gw_r_pretty_labs[2],title="Rigaud") + 
+  scale_y_continuous(limits=c(-0.60,0.50)) +
+  scale_x_continuous(limits=c(-0.40,0.60)) + 
+  scale_color_manual(values = c("steelblue4", "#72B3DA")) 
+
+
+gw_sl_plot=ggplot(gw_sldf, aes(x=Axis.1, y=Axis.2, color=Period, label=Month)) + 
+  theme_light() +
+  theme(text = element_text( size=12), 
+        plot.title=element_text(hjust=0.5)) + 
+  geom_point(size=2) + 
+  geom_text_repel(aes(label=Month),size = 4, show.legend = FALSE) +
+  labs(x=gw_sl_pretty_labs[1], y=gw_sl_pretty_labs[2], title="Saint-Lazare") + 
+  scale_y_continuous(limits=c(-0.60,0.50)) +
+  scale_x_continuous(limits=c(-0.40,0.60)) + 
+  scale_color_manual(values = c("steelblue4", "#72B3DA")) 
+comb_ord_gw=ggarrange(gw_sl_plot, gw_r_plot, ncol=2, labels=c("a","b"), common.legend = TRUE, legend="bottom")
+``` 
+
+Combine plots and save as PDF
+```{r}
+ggsave("pcoa_gw.pdf", plot=comb_ord_gw, width=16.50, height=10,units="cm", path="/image/")
+```
