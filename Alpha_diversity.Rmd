@@ -1,0 +1,61 @@
+---
+title: "Alpha Diversity"
+output: html_document
+date: "2023-03-09"
+---
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "/DADA2_output/")
+``` 
+
+```{r}
+asv=read.table("rarefied_asv.csv", sep=",", row.names=1, header=TRUE, check.names=FALSE) 
+meta=read.table("rarefied_meta.csv", sep=",", row.names=1, header=TRUE) 
+taxa=read.table("rarefied_taxa.csv", sep=",", row.names=1, header=TRUE) 
+
+ps=phyloseq(otu_table(asv, taxa_are_rows=TRUE), tax_table(as.matrix(taxa)), sample_data(meta))
+
+shannon = cbind(estimate_richness(ps,measures = 'shannon'),
+            sample_data(ps))
+``` 
+
+Temporal changes in Shannon 
+```{r}
+shan_gw=subset(shannon, Sample_type=="Groundwater")
+shan_gw$Month=factor(shan_gw$Month,levels = c("Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "June", "July","Aug")) 
+
+# Saint-Lazare
+shan_gw_sl=subset(shan_gw, City=="SL")
+shn_plot_sl=ggplot(shan_gw_sl, aes(x = Month, y = Shannon, group=City)) + 
+  geom_point(size=3) +
+  geom_line() +
+  labs(x ="", y=expression(paste("Shannon diversity (",italic("H')"))), title="Saint-Lazare") + 
+  theme_light() +
+  theme(text = element_text(size=12), 
+        plot.title=element_text(hjust=0.5),
+        legend.position="none", 
+        axis.text.x = element_text(angle = 45, hjust=1))
+
+# Rigaud
+shan_gw_rig=subset(shan_gw, City=="R")
+shn_plot_rig=ggplot(shan_gw_rig, aes(x = Month, y = Shannon, group=City)) + 
+  geom_point(size=3) +
+  geom_line() +
+  labs(x ='', y="",title="Rigaud") + 
+  theme_light() +
+  theme(text = element_text(size=12),
+        plot.title=element_text(hjust=0.5),
+        legend.position="none", 
+        axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank(), 
+        axis.text.x = element_text(angle = 45, hjust=1))
+
+comb_shann=ggarrange(shn_plot_sl, shn_plot_rig, ncol=2, labels=c("a","b")) + 
+  annotate("text", x=0.52, y=0.03, label = "Month", size = 4)
+comb_shann
+ggsave("shannon_gw.pdf", plot=comb_shann, width=16.5, height=8,units="cm", path="/image/")
+```
+# Save table
+```{r}
+write.csv(shan_gw, "/image/shannon_gw.csv", quote=FALSE, row.names = FALSE)
+```
+
